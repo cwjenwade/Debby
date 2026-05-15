@@ -1,0 +1,24 @@
+{
+  "storyId": "story-01",
+  "title": "Debby",
+  "startNodeId": "n1",
+  "nodes": {
+    "n1": {
+      "nodeId": "n1",
+      "pages": [
+        {
+          "pageId": "p1",
+          "type": "narration",
+          "text": "Debby v2 is ready.",
+          "assetId": "a1"
+        }
+      ]
+    }
+  },
+  "assets": {
+    "a1": {
+      "status": "missing",
+      "cloudinaryUrl": ""
+    }
+  }
+}

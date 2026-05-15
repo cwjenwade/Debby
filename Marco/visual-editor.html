@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Marco M1 視覺化編輯器 (Prototype)</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1A1A1A;
+      --panel: #2A2A2A;
+      --accent: #C8833D;
+      --text: #FFFFFF;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Noto Sans TC', sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* 側邊工具欄 */
+    .sidebar {
+      width: 300px;
+      background: var(--panel);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+    .sidebar h2 { margin: 0 0 10px 0; font-size: 20px; color: #E8D9B0; }
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn:hover { background: #E09A55; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    
+    .prop-group { display: flex; flex-direction: column; gap: 8px; }
+    .prop-group label { font-size: 14px; color: #AAA; }
+    .prop-group input { 
+      background: #333; border: 1px solid #555; color: white; 
+      padding: 8px; border-radius: 4px; font-family: monospace;
+    }
+
+    /* 編輯工作區 */
+    .workspace {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: radial-gradient(#333 1px, transparent 1px);
+      background-size: 20px 20px;
+      overflow: auto;
+    }
+
+    /* 畫布容器 (真實尺寸 1080x1500) */
+    .canvas-container {
+      width: 1080px;
+      height: 1500px;
+      background: #FFFDF8;
+      position: relative;
+      /* 縮放以符合螢幕 */
+      transform: scale(0.5);
+      transform-origin: center center;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    /* 可拖曳的元件共用樣式 */
+    .draggable {
+      position: absolute;
+      cursor: grab;
+      user-select: none;
+      box-sizing: border-box;
+      /* 加一點陰影讓它有浮起感 */
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));
+    }
+    .draggable:active { cursor: grabbing; }
+    
+    /* 點擊選中時的發光外框 */
+    .selected::after {
+      content: '';
+      position: absolute;
+      top: -4px; left: -4px; right: -4px; bottom: -4px;
+      border: 3px dashed #4A90E2;
+      border-radius: inherit;
+      pointer-events: none;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { border-color: rgba(74, 144, 226, 1); }
+      50% { border-color: rgba(74, 144, 226, 0.4); }
+      100% { border-color: rgba(74, 144, 226, 1); }
+    }
+
+    /* 各別元件樣式 */
+    #image-area {
+      width: 1080px; height: 1000px;
+      background: #E8E1D5;
+      top: 0; left: 0;
+      display: flex; justify-content: center; align-items: center;
+      color: #BCAE9A; font-size: 60px; font-weight: bold;
+      z-index: 1;
+    }
+    
+    #badge-el {
+      width: 250px; height: 80px;
+      background: #A4745E;
+      border-radius: 40px;
+      color: white; font-size: 44px; font-weight: bold;
+      display: flex; justify-content: center; align-items: center;
+      padding-left: 40px; /* 預留給頭像覆蓋的空間 */
+      top: 940px; left: 200px;
+      z-index: 2;
+    }
+
+    #avatar-el {
+      width: 260px; height: 260px; /* 半徑 130px */
+      background: #8B6554;
+      border-radius: 50%;
+      border: 16px solid #FFFFFF;
+      top: 870px; left: 110px;
+      z-index: 3;
+    }
+
+    #text-el {
+      width: 880px;
+      color: #333333; font-size: 52px;
+      text-align: center; line-height: 1.5;
+      top: 1250px; left: 100px;
+      z-index: 4;
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>🎨 Marco 編輯器</h2>
+    <p style="font-size: 14px; color: #AAA; line-height: 1.6;">
+      你可以直接在右側畫布上<strong>拖曳</strong>物件來改變位置！
+    </p>
+    
+    <div class="prop-group">
+      <label>目前選中物件：</label>
+      <input type="text" id="selected-id" readonly value="無">
+    </div>
+    <div class="prop-group">
+      <label>X 座標 (px)：</label>
+      <input type="number" id="prop-x" disabled>
+    </div>
+    <div class="prop-group">
+      <label>Y 座標 (px)：</label>
+      <input type="number" id="prop-y" disabled>
+    </div>
+
+    <div style="flex: 1;"></div>
+    
+    <button class="btn" onclick="exportManifest()">匯出 Manifest 座標</button>
+  </div>
+
+  <div class="workspace">
+    <div class="canvas-container" id="canvas">
+      
+      <!-- 卡片元件 -->
+      <div id="image-area" class="draggable">圖片區域</div>
+      <div id="badge-el" class="draggable">熊熊</div>
+      <div id="avatar-el" class="draggable"></div>
+      <div id="text-el" class="draggable">
+        「早安，莉莉！你看起來悶悶不樂的，<br>怎麼了呢？」
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 自動縮放畫布以適應視窗
+    function resizeCanvas() {
+      const container = document.getElementById('canvas');
+      const workspace = document.querySelector('.workspace');
+      const scaleX = (workspace.clientWidth - 100) / 1080;
+      const scaleY = (workspace.clientHeight - 100) / 1500;
+      const scale = Math.min(scaleX, scaleY, 1);
+      container.style.transform = `scale(${scale})`;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    // 拖曳邏輯
+    let activeEl = null;
+    let isDragging = false;
+    let startX, startY, initialLeft, initialTop;
+
+    const draggables = document.querySelectorAll('.draggable');
+    const inputX = document.getElementById('prop-x');
+    const inputY = document.getElementById('prop-y');
+    const inputId = document.getElementById('selected-id');
+
+    // 取得當前 CSS 縮放值
+    function getScale() {
+      const transform = document.getElementById('canvas').style.transform;
+      const match = transform.match(/scale\(([^)]+)\)/);
+      return match ? parseFloat(match[1]) : 1;
+    }
+
+    function selectElement(el) {
+      draggables.forEach(d => d.classList.remove('selected'));
+      if (el) {
+        el.classList.add('selected');
+        activeEl = el;
+        inputId.value = el.id;
+        inputX.value = parseInt(el.style.left || getComputedStyle(el).left, 10);
+        inputY.value = parseInt(el.style.top || getComputedStyle(el).top, 10);
+        inputX.disabled = false;
+        inputY.disabled = false;
+      } else {
+        activeEl = null;
+        inputId.value = '無';
+        inputX.value = '';
+        inputY.value = '';
+        inputX.disabled = true;
+        inputY.disabled = true;
+      }
+    }
+
+    // 點擊畫布空白處取消選取
+    document.getElementById('canvas').addEventListener('mousedown', (e) => {
+      if (e.target.id === 'canvas') selectElement(null);
+    });
+
+    draggables.forEach(el => {
+      el.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        selectElement(el);
+        startX = e.clientX;
+        startY = e.clientY;
+        initialLeft = parseInt(getComputedStyle(el).left, 10) || 0;
+        initialTop = parseInt(getComputedStyle(el).top, 10) || 0;
+        e.stopPropagation(); // 避免觸發父層事件
+      });
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging || !activeEl) return;
+      const scale = getScale();
+      // 滑鼠移動的真實距離要除以縮放比例，才會對應到 1080x1500 畫布上的正確位移
+      const dx = (e.clientX - startX) / scale;
+      const dy = (e.clientY - startY) / scale;
+      
+      const newLeft = Math.round(initialLeft + dx);
+      const newTop = Math.round(initialTop + dy);
+      
+      activeEl.style.left = newLeft + 'px';
+      activeEl.style.top = newTop + 'px';
+      
+      inputX.value = newLeft;
+      inputY.value = newTop;
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // 綁定輸入框即時修改
+    inputX.addEventListener('input', (e) => {
+      if (activeEl) activeEl.style.left = e.target.value + 'px';
+    });
+    inputY.addEventListener('input', (e) => {
+      if (activeEl) activeEl.style.top = e.target.value + 'px';
+    });
+
+    // 匯出 JSON
+    function exportManifest() {
+      const data = {};
+      draggables.forEach(el => {
+        data[el.id] = {
+          x: parseInt(el.style.left || getComputedStyle(el).left, 10),
+          y: parseInt(el.style.top || getComputedStyle(el).top, 10)
+        };
+      });
+      alert('準備將以下座標寫入 JSON 給 Marco CLI 壓圖：\n\n' + JSON.stringify(data, null, 2));
+      console.log('Exported Manifest layout:', data);
+    }
+  </script>
+</body>
+</html>

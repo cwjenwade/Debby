@@ -1,0 +1,1613 @@
+[dotenv@17.3.1] injecting env (5) from .env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+{
+  "ok": true,
+  "steps": [
+    {
+      "input": "顯示繪本故事",
+      "eventType": "message",
+      "result": {
+        "source": "webhook",
+        "mode": "trigger",
+        "messages": [
+          {
+            "type": "text",
+            "text": "輸入「顯示繪本故事」開始故事，或使用當前卡片下方的按鈕繼續。"
+          }
+        ],
+        "binding": {
+          "id": "trigger-story-carousel",
+          "scope": "account",
+          "keyword": "顯示繪本故事",
+          "actionType": "carousel",
+          "label": "繪本故事選單",
+          "messageText": "請選擇你想閱讀的繪本。",
+          "buttonLabel": "開始閱讀",
+          "storyIds": [
+            "story-01"
+          ],
+          "carouselItems": [
+            {
+              "id": "carousel-item-35dd5abc",
+              "storyId": "story-01",
+              "title": "熊熊尋心：一隻熊的旅程",
+              "subtitle": "從既有故事匯入的預設樣板",
+              "author": "",
+              "buttonLabel": "開始閱讀",
+              "imagePath": "",
+              "sortOrder": 0
+            }
+          ],
+          "storyId": "",
+          "startNodeId": ""
+        },
+        "session": null,
+        "render": null,
+        "traversal": null,
+        "virtualTransitions": []
+      }
+    },
+    {
+      "input": "postback:start_story",
+      "eventType": "postback",
+      "result": {
+        "source": "webhook",
+        "mode": "start_story",
+        "messages": [
+          {
+            "type": "image",
+            "originalContentUrl": "https://debbylinehose.vercel.app/public/story/01/image01.png",
+            "previewImageUrl": "https://debbylinehose.vercel.app/public/story/01/image01.png"
+          },
+          {
+            "type": "text",
+            "text": "請選擇：\n\n疲憊的你會如何選擇？\n\nA. 今天還是請假好了\n\nB. 還是乖乖去上班吧",
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "A",
+                    "displayText": "A. 今天還是請假好了",
+                    "data": "action=story_choice&storyId=story-01&fromNodeId=pic1&choice=A&nextNodeId=pic2"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "B",
+                    "displayText": "B. 還是乖乖去上班吧",
+                    "data": "action=story_choice&storyId=story-01&fromNodeId=pic1&choice=B&nextNodeId=pic2"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "回選單",
+                    "displayText": "回選單",
+                    "data": "action=story_menu&storyId=story-01"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "session": {
+          "storyId": "story-01",
+          "currentNodeId": "pic1"
+        },
+        "render": null,
+        "traversal": {
+          "entries": [
+            {
+              "id": "pic1",
+              "nodeId": "pic1",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic2",
+              "optionA": "pic2",
+              "optionB": ""
+            },
+            {
+              "id": "pic1:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "A",
+              "label": "今天還是請假好了",
+              "text": "熊熊決定停下來，不再假裝自己只是普通的累。",
+              "nextNodeId": "pic2",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic1:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "B",
+              "label": "還是乖乖去上班吧",
+              "text": "甚麼事都沒發生，一天就這樣過去了。邀請你試試另一個回答。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic2",
+              "nodeId": "pic2",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic3",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic3",
+              "nodeId": "pic3",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic4",
+              "optionA": "pic4",
+              "optionB": ""
+            },
+            {
+              "id": "pic3:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "A",
+              "label": "熊熊總覺得哪裡不對勁，決定回家再想想",
+              "text": "熊熊終於承認，問題不是一時情緒，而是這條路從來都不像他的路。",
+              "nextNodeId": "pic4",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic3:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "B",
+              "label": "眼前的工作比較重要，上班本來就這麼折磨",
+              "text": "熊熊繼續了日復一日的社畜生活，沒有任何改變。請你再重新選擇一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic4",
+              "nodeId": "pic4",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic5",
+              "optionA": "pic5",
+              "optionB": ""
+            },
+            {
+              "id": "pic4:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "A",
+              "label": "熊熊難過地想：總覺得爸媽沒有理解我",
+              "text": "熊熊第一次清楚感受到，真正讓他痛的，是不被理解。",
+              "nextNodeId": "pic5",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic4:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "B",
+              "label": "熊熊嘆了一口氣：既然他們都這麼說了，那就這樣吧",
+              "text": "熊熊繼續過著朝九晚五的上班人生。請你試試看其他選項吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic5",
+              "nodeId": "pic5",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic6",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic6",
+              "nodeId": "pic6",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic7",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic7",
+              "nodeId": "pic7",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic8",
+              "optionA": "pic8",
+              "optionB": ""
+            },
+            {
+              "id": "pic7:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "A",
+              "label": "我不能再這樣生活下去，我需要找到我的道路，我自己的冒險。",
+              "text": "熊熊決定不再壓抑那股甦醒的力量。",
+              "nextNodeId": "pic8",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic7:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "B",
+              "label": "這個夢好不真實，好難相信這是真的",
+              "text": "還在為冒險猶豫嗎？試試看做點什麼不一樣的吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic8",
+              "nodeId": "pic8",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic9",
+              "optionA": "pic9",
+              "optionB": ""
+            },
+            {
+              "id": "pic8:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "A",
+              "label": "即使他們這麼說，我也要努力試試看！",
+              "text": "熊熊雖然難受，卻沒有再把夢收回去。",
+              "nextNodeId": "pic9",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic8:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "B",
+              "label": "也許這麼做真的太衝動了",
+              "text": "一直以來總是努力達成家人期待的你真是辛苦了。相信自己，試著冒險一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic9",
+              "nodeId": "pic9",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic10",
+              "optionA": "pic10",
+              "optionB": ""
+            },
+            {
+              "id": "pic9:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "A",
+              "label": "即使面對阻力，我也會勇敢地走自己的路",
+              "text": "他把願望收進心裡，也把勇氣慢慢點亮了。",
+              "nextNodeId": "pic10",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic9:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "B",
+              "label": "這也許是吉兆，代表之後會越來越順利的",
+              "text": "熊熊知道，真正能改變人生的，不是吉兆，而是自己跨出去的勇氣。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic10",
+              "nodeId": "pic10",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic11",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic11",
+              "nodeId": "pic11",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic12",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic12",
+              "nodeId": "pic12",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic13",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic13",
+              "nodeId": "pic13",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic14",
+              "optionA": "pic14",
+              "optionB": ""
+            },
+            {
+              "id": "pic13:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "A",
+              "label": "謝謝你們，我會記得的。我必須這麼做，為了自己找到真正的快樂和意義。",
+              "text": "熊熊轉身上路。這一步，也許最難，卻最真實。",
+              "nextNodeId": "pic14",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic13:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "B",
+              "label": "謝謝你們，記得幫我留一塊蜂蜜蛋糕。",
+              "text": "踏出那一步需要很大的勇氣。試著和熊熊一起重新出發吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic14",
+              "nodeId": "pic14",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic15",
+              "optionA": "pic15",
+              "optionB": ""
+            },
+            {
+              "id": "pic14:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "A",
+              "label": "我從沒想過，出發的這一步會讓我感到如此的自由和快樂",
+              "text": "熊熊第一次感覺到，自由並不是遠方，而是在走上自己的路之後。 ",
+              "nextNodeId": "pic15",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic14:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "B",
+              "label": "在森林裡總覺得多少有點不安，開始有點想家了",
+              "text": "旅程才剛開始，在這裡放棄有點可惜。想邀請你一起繼續這趟旅程吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic15",
+              "nodeId": "pic15",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic16",
+              "optionA": "pic16",
+              "optionB": ""
+            },
+            {
+              "id": "pic15:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "A",
+              "label": "我不會讓這些小障礙阻止我的。",
+              "text": "熊熊用盡全力清理前路，也清出了新的信心。",
+              "nextNodeId": "pic16",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic15:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "B",
+              "label": "早知道應該先做好準備再出門的",
+              "text": "旅程中處處充滿挑戰，雖然遇到阻礙總讓人氣餒，但我相信你可以的！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic16",
+              "nodeId": "pic16",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic17",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic17",
+              "nodeId": "pic17",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic18",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic18",
+              "nodeId": "pic18",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic19",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic19",
+              "nodeId": "pic19",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic20",
+              "optionA": "pic20",
+              "optionB": ""
+            },
+            {
+              "id": "pic19:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "A",
+              "label": "這是...我？！",
+              "text": "熊熊終於懂了：真正的寶藏不是金銀財寶，而是自己的心、自由意志、自我和勇氣。",
+              "nextNodeId": "pic20",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic19:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "B",
+              "label": "這是...寶藏？！",
+              "text": "熊熊先愣住，以為自己找到了寶藏。但很快他明白，真正發亮的不是財寶，而是一路走來長出的心。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic20",
+              "nodeId": "pic20",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "",
+              "optionA": "",
+              "optionB": ""
+            }
+          ],
+          "reachableNodeIds": [
+            "pic1",
+            "pic2",
+            "pic3",
+            "pic4",
+            "pic5",
+            "pic6",
+            "pic7",
+            "pic8",
+            "pic9",
+            "pic10",
+            "pic11",
+            "pic12",
+            "pic13",
+            "pic14",
+            "pic15",
+            "pic16",
+            "pic17",
+            "pic18",
+            "pic19",
+            "pic20"
+          ],
+          "unreachableNodeIds": [],
+          "deadEndNodeIds": [
+            "pic20"
+          ]
+        },
+        "virtualTransitions": [
+          {
+            "id": "pic1:virtual:A",
+            "type": "transition",
+            "virtual": true,
+            "sourceNodeId": "pic1",
+            "branch": "A",
+            "label": "今天還是請假好了",
+            "text": "熊熊決定停下來，不再假裝自己只是普通的累。",
+            "nextNodeId": "pic2",
+            "position": "after",
+            "fieldTarget": "choice-a"
+          },
+          {
+            "id": "pic1:virtual:B",
+            "type": "transition",
+            "virtual": true,
+            "sourceNodeId": "pic1",
+            "branch": "B",
+            "label": "還是乖乖去上班吧",
+            "text": "甚麼事都沒發生，一天就這樣過去了。邀請你試試另一個回答。",
+            "nextNodeId": "",
+            "position": "after",
+            "fieldTarget": "choice-b"
+          }
+        ]
+      }
+    },
+    {
+      "input": "postback:story_choice A",
+      "eventType": "postback",
+      "result": {
+        "source": "webhook",
+        "mode": "story_choice",
+        "messages": [
+          {
+            "type": "text",
+            "text": "熊熊決定停下來，不再假裝自己只是普通的累。"
+          },
+          {
+            "type": "image",
+            "originalContentUrl": "https://debbylinehose.vercel.app/public/story/01/image02.png",
+            "previewImageUrl": "https://debbylinehose.vercel.app/public/story/01/image02.png"
+          },
+          {
+            "type": "text",
+            "text": "PIC2",
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "繼續",
+                    "displayText": "繼續",
+                    "data": "action=continue_story&storyId=story-01&fromNodeId=pic2&nextNodeId=pic3"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "回選單",
+                    "displayText": "回選單",
+                    "data": "action=story_menu&storyId=story-01"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "session": {
+          "storyId": "story-01",
+          "currentNodeId": "pic2"
+        },
+        "render": null,
+        "traversal": {
+          "entries": [
+            {
+              "id": "pic1",
+              "nodeId": "pic1",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic2",
+              "optionA": "pic2",
+              "optionB": ""
+            },
+            {
+              "id": "pic1:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "A",
+              "label": "今天還是請假好了",
+              "text": "熊熊決定停下來，不再假裝自己只是普通的累。",
+              "nextNodeId": "pic2",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic1:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "B",
+              "label": "還是乖乖去上班吧",
+              "text": "甚麼事都沒發生，一天就這樣過去了。邀請你試試另一個回答。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic2",
+              "nodeId": "pic2",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic3",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic3",
+              "nodeId": "pic3",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic4",
+              "optionA": "pic4",
+              "optionB": ""
+            },
+            {
+              "id": "pic3:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "A",
+              "label": "熊熊總覺得哪裡不對勁，決定回家再想想",
+              "text": "熊熊終於承認，問題不是一時情緒，而是這條路從來都不像他的路。",
+              "nextNodeId": "pic4",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic3:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "B",
+              "label": "眼前的工作比較重要，上班本來就這麼折磨",
+              "text": "熊熊繼續了日復一日的社畜生活，沒有任何改變。請你再重新選擇一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic4",
+              "nodeId": "pic4",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic5",
+              "optionA": "pic5",
+              "optionB": ""
+            },
+            {
+              "id": "pic4:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "A",
+              "label": "熊熊難過地想：總覺得爸媽沒有理解我",
+              "text": "熊熊第一次清楚感受到，真正讓他痛的，是不被理解。",
+              "nextNodeId": "pic5",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic4:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "B",
+              "label": "熊熊嘆了一口氣：既然他們都這麼說了，那就這樣吧",
+              "text": "熊熊繼續過著朝九晚五的上班人生。請你試試看其他選項吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic5",
+              "nodeId": "pic5",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic6",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic6",
+              "nodeId": "pic6",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic7",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic7",
+              "nodeId": "pic7",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic8",
+              "optionA": "pic8",
+              "optionB": ""
+            },
+            {
+              "id": "pic7:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "A",
+              "label": "我不能再這樣生活下去，我需要找到我的道路，我自己的冒險。",
+              "text": "熊熊決定不再壓抑那股甦醒的力量。",
+              "nextNodeId": "pic8",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic7:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "B",
+              "label": "這個夢好不真實，好難相信這是真的",
+              "text": "還在為冒險猶豫嗎？試試看做點什麼不一樣的吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic8",
+              "nodeId": "pic8",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic9",
+              "optionA": "pic9",
+              "optionB": ""
+            },
+            {
+              "id": "pic8:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "A",
+              "label": "即使他們這麼說，我也要努力試試看！",
+              "text": "熊熊雖然難受，卻沒有再把夢收回去。",
+              "nextNodeId": "pic9",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic8:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "B",
+              "label": "也許這麼做真的太衝動了",
+              "text": "一直以來總是努力達成家人期待的你真是辛苦了。相信自己，試著冒險一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic9",
+              "nodeId": "pic9",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic10",
+              "optionA": "pic10",
+              "optionB": ""
+            },
+            {
+              "id": "pic9:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "A",
+              "label": "即使面對阻力，我也會勇敢地走自己的路",
+              "text": "他把願望收進心裡，也把勇氣慢慢點亮了。",
+              "nextNodeId": "pic10",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic9:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "B",
+              "label": "這也許是吉兆，代表之後會越來越順利的",
+              "text": "熊熊知道，真正能改變人生的，不是吉兆，而是自己跨出去的勇氣。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic10",
+              "nodeId": "pic10",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic11",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic11",
+              "nodeId": "pic11",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic12",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic12",
+              "nodeId": "pic12",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic13",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic13",
+              "nodeId": "pic13",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic14",
+              "optionA": "pic14",
+              "optionB": ""
+            },
+            {
+              "id": "pic13:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "A",
+              "label": "謝謝你們，我會記得的。我必須這麼做，為了自己找到真正的快樂和意義。",
+              "text": "熊熊轉身上路。這一步，也許最難，卻最真實。",
+              "nextNodeId": "pic14",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic13:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "B",
+              "label": "謝謝你們，記得幫我留一塊蜂蜜蛋糕。",
+              "text": "踏出那一步需要很大的勇氣。試著和熊熊一起重新出發吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic14",
+              "nodeId": "pic14",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic15",
+              "optionA": "pic15",
+              "optionB": ""
+            },
+            {
+              "id": "pic14:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "A",
+              "label": "我從沒想過，出發的這一步會讓我感到如此的自由和快樂",
+              "text": "熊熊第一次感覺到，自由並不是遠方，而是在走上自己的路之後。 ",
+              "nextNodeId": "pic15",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic14:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "B",
+              "label": "在森林裡總覺得多少有點不安，開始有點想家了",
+              "text": "旅程才剛開始，在這裡放棄有點可惜。想邀請你一起繼續這趟旅程吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic15",
+              "nodeId": "pic15",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic16",
+              "optionA": "pic16",
+              "optionB": ""
+            },
+            {
+              "id": "pic15:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "A",
+              "label": "我不會讓這些小障礙阻止我的。",
+              "text": "熊熊用盡全力清理前路，也清出了新的信心。",
+              "nextNodeId": "pic16",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic15:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "B",
+              "label": "早知道應該先做好準備再出門的",
+              "text": "旅程中處處充滿挑戰，雖然遇到阻礙總讓人氣餒，但我相信你可以的！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic16",
+              "nodeId": "pic16",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic17",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic17",
+              "nodeId": "pic17",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic18",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic18",
+              "nodeId": "pic18",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic19",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic19",
+              "nodeId": "pic19",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic20",
+              "optionA": "pic20",
+              "optionB": ""
+            },
+            {
+              "id": "pic19:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "A",
+              "label": "這是...我？！",
+              "text": "熊熊終於懂了：真正的寶藏不是金銀財寶，而是自己的心、自由意志、自我和勇氣。",
+              "nextNodeId": "pic20",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic19:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "B",
+              "label": "這是...寶藏？！",
+              "text": "熊熊先愣住，以為自己找到了寶藏。但很快他明白，真正發亮的不是財寶，而是一路走來長出的心。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic20",
+              "nodeId": "pic20",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "",
+              "optionA": "",
+              "optionB": ""
+            }
+          ],
+          "reachableNodeIds": [
+            "pic1",
+            "pic2",
+            "pic3",
+            "pic4",
+            "pic5",
+            "pic6",
+            "pic7",
+            "pic8",
+            "pic9",
+            "pic10",
+            "pic11",
+            "pic12",
+            "pic13",
+            "pic14",
+            "pic15",
+            "pic16",
+            "pic17",
+            "pic18",
+            "pic19",
+            "pic20"
+          ],
+          "unreachableNodeIds": [],
+          "deadEndNodeIds": [
+            "pic20"
+          ]
+        },
+        "virtualTransitions": [
+          {
+            "id": "pic1:virtual:A",
+            "type": "transition",
+            "virtual": true,
+            "sourceNodeId": "pic1",
+            "branch": "A",
+            "label": "今天還是請假好了",
+            "text": "熊熊決定停下來，不再假裝自己只是普通的累。",
+            "nextNodeId": "pic2",
+            "position": "after",
+            "fieldTarget": "choice-a"
+          },
+          {
+            "id": "pic1:virtual:B",
+            "type": "transition",
+            "virtual": true,
+            "sourceNodeId": "pic1",
+            "branch": "B",
+            "label": "還是乖乖去上班吧",
+            "text": "甚麼事都沒發生，一天就這樣過去了。邀請你試試另一個回答。",
+            "nextNodeId": "",
+            "position": "after",
+            "fieldTarget": "choice-b"
+          }
+        ]
+      }
+    },
+    {
+      "input": "postback:continue",
+      "eventType": "postback",
+      "result": {
+        "source": "webhook",
+        "mode": "continue_story",
+        "messages": [
+          {
+            "type": "image",
+            "originalContentUrl": "https://debbylinehose.vercel.app/public/story/01/image03.png",
+            "previewImageUrl": "https://debbylinehose.vercel.app/public/story/01/image03.png"
+          },
+          {
+            "type": "text",
+            "text": "請選擇：\n\n熊熊總覺得哪裡不對勁，這時他會怎麼做？\n\nA. 熊熊總覺得哪裡不對勁，決定回家再想想\n\nB. 眼前的工作比較重要，上班本來就這麼折磨",
+            "quickReply": {
+              "items": [
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "A",
+                    "displayText": "A. 熊熊總覺得哪裡不對勁，決定回家再想想",
+                    "data": "action=story_choice&storyId=story-01&fromNodeId=pic3&choice=A&nextNodeId=pic4"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "B",
+                    "displayText": "B. 眼前的工作比較重要，上班本來就這麼折磨",
+                    "data": "action=story_choice&storyId=story-01&fromNodeId=pic3&choice=B&nextNodeId=pic4"
+                  }
+                },
+                {
+                  "type": "action",
+                  "action": {
+                    "type": "postback",
+                    "label": "回選單",
+                    "displayText": "回選單",
+                    "data": "action=story_menu&storyId=story-01"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "session": {
+          "storyId": "story-01",
+          "currentNodeId": "pic3"
+        },
+        "render": null,
+        "traversal": {
+          "entries": [
+            {
+              "id": "pic1",
+              "nodeId": "pic1",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic2",
+              "optionA": "pic2",
+              "optionB": ""
+            },
+            {
+              "id": "pic1:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "A",
+              "label": "今天還是請假好了",
+              "text": "熊熊決定停下來，不再假裝自己只是普通的累。",
+              "nextNodeId": "pic2",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic1:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic1",
+              "branch": "B",
+              "label": "還是乖乖去上班吧",
+              "text": "甚麼事都沒發生，一天就這樣過去了。邀請你試試另一個回答。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic2",
+              "nodeId": "pic2",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic3",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic3",
+              "nodeId": "pic3",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic4",
+              "optionA": "pic4",
+              "optionB": ""
+            },
+            {
+              "id": "pic3:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "A",
+              "label": "熊熊總覺得哪裡不對勁，決定回家再想想",
+              "text": "熊熊終於承認，問題不是一時情緒，而是這條路從來都不像他的路。",
+              "nextNodeId": "pic4",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic3:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic3",
+              "branch": "B",
+              "label": "眼前的工作比較重要，上班本來就這麼折磨",
+              "text": "熊熊繼續了日復一日的社畜生活，沒有任何改變。請你再重新選擇一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic4",
+              "nodeId": "pic4",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic5",
+              "optionA": "pic5",
+              "optionB": ""
+            },
+            {
+              "id": "pic4:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "A",
+              "label": "熊熊難過地想：總覺得爸媽沒有理解我",
+              "text": "熊熊第一次清楚感受到，真正讓他痛的，是不被理解。",
+              "nextNodeId": "pic5",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic4:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic4",
+              "branch": "B",
+              "label": "熊熊嘆了一口氣：既然他們都這麼說了，那就這樣吧",
+              "text": "熊熊繼續過著朝九晚五的上班人生。請你試試看其他選項吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic5",
+              "nodeId": "pic5",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic6",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic6",
+              "nodeId": "pic6",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic7",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic7",
+              "nodeId": "pic7",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic8",
+              "optionA": "pic8",
+              "optionB": ""
+            },
+            {
+              "id": "pic7:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "A",
+              "label": "我不能再這樣生活下去，我需要找到我的道路，我自己的冒險。",
+              "text": "熊熊決定不再壓抑那股甦醒的力量。",
+              "nextNodeId": "pic8",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic7:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic7",
+              "branch": "B",
+              "label": "這個夢好不真實，好難相信這是真的",
+              "text": "還在為冒險猶豫嗎？試試看做點什麼不一樣的吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic8",
+              "nodeId": "pic8",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic9",
+              "optionA": "pic9",
+              "optionB": ""
+            },
+            {
+              "id": "pic8:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "A",
+              "label": "即使他們這麼說，我也要努力試試看！",
+              "text": "熊熊雖然難受，卻沒有再把夢收回去。",
+              "nextNodeId": "pic9",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic8:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic8",
+              "branch": "B",
+              "label": "也許這麼做真的太衝動了",
+              "text": "一直以來總是努力達成家人期待的你真是辛苦了。相信自己，試著冒險一次吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic9",
+              "nodeId": "pic9",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic10",
+              "optionA": "pic10",
+              "optionB": ""
+            },
+            {
+              "id": "pic9:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "A",
+              "label": "即使面對阻力，我也會勇敢地走自己的路",
+              "text": "他把願望收進心裡，也把勇氣慢慢點亮了。",
+              "nextNodeId": "pic10",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic9:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic9",
+              "branch": "B",
+              "label": "這也許是吉兆，代表之後會越來越順利的",
+              "text": "熊熊知道，真正能改變人生的，不是吉兆，而是自己跨出去的勇氣。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic10",
+              "nodeId": "pic10",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic11",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic11",
+              "nodeId": "pic11",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic12",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic12",
+              "nodeId": "pic12",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic13",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic13",
+              "nodeId": "pic13",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic14",
+              "optionA": "pic14",
+              "optionB": ""
+            },
+            {
+              "id": "pic13:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "A",
+              "label": "謝謝你們，我會記得的。我必須這麼做，為了自己找到真正的快樂和意義。",
+              "text": "熊熊轉身上路。這一步，也許最難，卻最真實。",
+              "nextNodeId": "pic14",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic13:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic13",
+              "branch": "B",
+              "label": "謝謝你們，記得幫我留一塊蜂蜜蛋糕。",
+              "text": "踏出那一步需要很大的勇氣。試著和熊熊一起重新出發吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic14",
+              "nodeId": "pic14",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic15",
+              "optionA": "pic15",
+              "optionB": ""
+            },
+            {
+              "id": "pic14:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "A",
+              "label": "我從沒想過，出發的這一步會讓我感到如此的自由和快樂",
+              "text": "熊熊第一次感覺到，自由並不是遠方，而是在走上自己的路之後。 ",
+              "nextNodeId": "pic15",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic14:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic14",
+              "branch": "B",
+              "label": "在森林裡總覺得多少有點不安，開始有點想家了",
+              "text": "旅程才剛開始，在這裡放棄有點可惜。想邀請你一起繼續這趟旅程吧！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic15",
+              "nodeId": "pic15",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic16",
+              "optionA": "pic16",
+              "optionB": ""
+            },
+            {
+              "id": "pic15:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "A",
+              "label": "我不會讓這些小障礙阻止我的。",
+              "text": "熊熊用盡全力清理前路，也清出了新的信心。",
+              "nextNodeId": "pic16",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic15:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic15",
+              "branch": "B",
+              "label": "早知道應該先做好準備再出門的",
+              "text": "旅程中處處充滿挑戰，雖然遇到阻礙總讓人氣餒，但我相信你可以的！",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic16",
+              "nodeId": "pic16",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic17",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic17",
+              "nodeId": "pic17",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic18",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic18",
+              "nodeId": "pic18",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "pic19",
+              "optionA": "",
+              "optionB": ""
+            },
+            {
+              "id": "pic19",
+              "nodeId": "pic19",
+              "type": "choice",
+              "virtual": false,
+              "nextNodeId": "pic20",
+              "optionA": "pic20",
+              "optionB": ""
+            },
+            {
+              "id": "pic19:virtual:A",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "A",
+              "label": "這是...我？！",
+              "text": "熊熊終於懂了：真正的寶藏不是金銀財寶，而是自己的心、自由意志、自我和勇氣。",
+              "nextNodeId": "pic20",
+              "position": "after",
+              "fieldTarget": "choice-a"
+            },
+            {
+              "id": "pic19:virtual:B",
+              "type": "transition",
+              "virtual": true,
+              "sourceNodeId": "pic19",
+              "branch": "B",
+              "label": "這是...寶藏？！",
+              "text": "熊熊先愣住，以為自己找到了寶藏。但很快他明白，真正發亮的不是財寶，而是一路走來長出的心。",
+              "nextNodeId": "",
+              "position": "after",
+              "fieldTarget": "choice-b"
+            },
+            {
+              "id": "pic20",
+              "nodeId": "pic20",
+              "type": "carousel",
+              "virtual": false,
+              "nextNodeId": "",
+              "optionA": "",
+              "optionB": ""
+            }
+          ],
+          "reachableNodeIds": [
+            "pic1",
+            "pic2",
+            "pic3",
+            "pic4",
+            "pic5",
+            "pic6",
+            "pic7",
+            "pic8",
+            "pic9",
+            "pic10",
+            "pic11",
+            "pic12",
+            "pic13",
+            "pic14",
+            "pic15",
+            "pic16",
+            "pic17",
+            "pic18",
+            "pic19",
+            "pic20"
+          ],
+          "unreachableNodeIds": [],
+          "deadEndNodeIds": [
+            "pic20"
+          ]
+        },
+        "virtualTransitions": []
+      }
+    }
+  ]
+}

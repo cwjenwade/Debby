@@ -1,0 +1,59 @@
+{
+  "results": [
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p1-dialogue",
+      "pageType": "dialogue",
+      "assetId": "",
+      "localFile": "/Users/wade/Developer/Debby/Marco/output/rendered-assets/story-mvp_n1_p1-dialogue.png",
+      "status": "rendered",
+      "renderedAt": "2026-05-15T17:07:26.305Z",
+      "error": null
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p2-narration",
+      "pageType": "narration",
+      "assetId": "",
+      "localFile": "/Users/wade/Developer/Debby/Marco/output/rendered-assets/story-mvp_n1_p2-narration.png",
+      "status": "rendered",
+      "renderedAt": "2026-05-15T17:07:26.343Z",
+      "error": null
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p3-voiceover",
+      "pageType": "voiceover",
+      "assetId": "",
+      "localFile": "/Users/wade/Developer/Debby/Marco/output/rendered-assets/story-mvp_n1_p3-voiceover.png",
+      "status": "rendered",
+      "renderedAt": "2026-05-15T17:07:26.382Z",
+      "error": null
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p4-choice",
+      "pageType": "choice",
+      "assetId": "",
+      "localFile": "/Users/wade/Developer/Debby/Marco/output/rendered-assets/story-mvp_n1_p4-choice.png",
+      "status": "rendered",
+      "renderedAt": "2026-05-15T17:07:26.422Z",
+      "error": null
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p5-next",
+      "pageType": "next",
+      "assetId": "",
+      "localFile": "/Users/wade/Developer/Debby/Marco/output/rendered-assets/story-mvp_n1_p5-next.png",
+      "status": "rendered",
+      "renderedAt": "2026-05-15T17:07:26.459Z",
+      "error": null
+    }
+  ]
+}

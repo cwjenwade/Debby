@@ -1,0 +1,52 @@
+[
+  {
+    "storyId": "story-mvp",
+    "nodeId": "n1",
+    "pageId": "p1-dialogue",
+    "pageType": "dialogue",
+    "public_id": "story-mvp_n1_p1-dialogue",
+    "cloudinaryUrl": "https://res.cloudinary.com/dywplv0bd/image/upload/v1778864542/story-mvp_n1_p1-dialogue.png",
+    "status": "uploaded",
+    "error": null
+  },
+  {
+    "storyId": "story-mvp",
+    "nodeId": "n1",
+    "pageId": "p2-narration",
+    "pageType": "narration",
+    "public_id": "story-mvp_n1_p2-narration",
+    "cloudinaryUrl": "https://res.cloudinary.com/dywplv0bd/image/upload/v1778864544/story-mvp_n1_p2-narration.png",
+    "status": "uploaded",
+    "error": null
+  },
+  {
+    "storyId": "story-mvp",
+    "nodeId": "n1",
+    "pageId": "p3-voiceover",
+    "pageType": "voiceover",
+    "public_id": "story-mvp_n1_p3-voiceover",
+    "cloudinaryUrl": "https://res.cloudinary.com/dywplv0bd/image/upload/v1778864546/story-mvp_n1_p3-voiceover.png",
+    "status": "uploaded",
+    "error": null
+  },
+  {
+    "storyId": "story-mvp",
+    "nodeId": "n1",
+    "pageId": "p4-choice",
+    "pageType": "choice",
+    "public_id": "story-mvp_n1_p4-choice",
+    "cloudinaryUrl": "https://res.cloudinary.com/dywplv0bd/image/upload/v1778864547/story-mvp_n1_p4-choice.png",
+    "status": "uploaded",
+    "error": null
+  },
+  {
+    "storyId": "story-mvp",
+    "nodeId": "n1",
+    "pageId": "p5-next",
+    "pageType": "next",
+    "public_id": "story-mvp_n1_p5-next",
+    "cloudinaryUrl": "https://res.cloudinary.com/dywplv0bd/image/upload/v1778864548/story-mvp_n1_p5-next.png",
+    "status": "uploaded",
+    "error": null
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "name": "marco-studio",
+  "version": "1.0.0",
+  "description": "Lineat 本機獨立產圖引擎 (Marco M1)",
+  "main": "cli.js",
+  "bin": {
+    "marco": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "cloudinary": "^2.0.0",
+    "sharp": "^0.32.6"
+  }
+}

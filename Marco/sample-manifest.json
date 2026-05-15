@@ -1,0 +1,56 @@
+{
+  "pages": [
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p1-dialogue",
+      "pageType": "dialogue",
+      "renderData": {
+        "speakerName": "勇者",
+        "text": "我們終於抵達了這座傳說中的山谷。不知道前面還有什麼危險在等著我們？"
+      }
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p2-narration",
+      "pageType": "narration",
+      "renderData": {
+        "text": "山谷中瀰漫著濃霧，周圍不時傳來野獸的低鳴，讓氣氛變得十分詭異。"
+      }
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p3-voiceover",
+      "pageType": "voiceover",
+      "renderData": {
+        "paragraphs": [
+          "很久很久以前",
+          "在這座深山之中",
+          "藏著無盡的寶藏"
+        ]
+      }
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p4-choice",
+      "pageType": "choice",
+      "renderData": {
+        "prompt": "突然，前方出現了分叉路。你要往哪裡走？",
+        "optionA": { "label": "走左邊的小路" },
+        "optionB": { "label": "走右邊的大道" }
+      }
+    },
+    {
+      "storyId": "story-mvp",
+      "nodeId": "n1",
+      "pageId": "p5-next",
+      "pageType": "next",
+      "renderData": {
+        "nextLabel": "繼續前進"
+      }
+    }
+  ]
+}
