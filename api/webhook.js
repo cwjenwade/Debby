@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Helper to clean env vars
+// Helper to clean env vars (removes common copy-paste errors like quotes)
 const clean = (val) => (val || "").replace(/^["']|["']$/g, "").trim();
 
 const config = {
@@ -18,33 +18,37 @@ const client = new messagingApi.MessagingApiClient({
   channelAccessToken: config.channelAccessToken,
 });
 
-export const endpointConfig = {
+export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: false, // Required to handle raw body for signature validation
   },
 };
 
-async function getRawBody(req) {
-  const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(typeof chunk === "string" ? Buffer.from(chunk) : chunk);
-  }
-  return Buffer.concat(chunks);
+// Robust raw body parser for Vercel Serverless Functions
+function getRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on("data", (chunk) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks)));
+    req.on("error", (err) => reject(err));
+  });
 }
 
 export default async function handler(req, res) {
-  // GET request for basic connectivity check
+  // 1. Connectivity & Diagnostic Check
   if (req.method === "GET") {
     return res.status(200).json({
       ok: true,
-      service: "Debby Webhook (v2.1)",
-      config: {
-        hasAccessToken: !!config.channelAccessToken,
-        accessTokenLength: config.channelAccessToken.length,
-        hasChannelSecret: !!config.channelSecret,
-        channelSecretLength: config.channelSecret.length,
+      service: "Debby Webhook v2.2",
+      diagnostics: {
+        hasToken: !!config.channelAccessToken,
+        tokenLength: config.channelAccessToken.length,
+        hasSecret: !!config.channelSecret,
+        secretLength: config.channelSecret.length,
       },
-      hint: "If secret length is ~170, you probably swapped it with the access token. Secret should be 32 chars."
+      env_check: {
+        NODE_ENV: process.env.NODE_ENV,
+      }
     });
   }
 
@@ -54,31 +58,45 @@ export default async function handler(req, res) {
 
   try {
     const signature = req.headers["x-line-signature"];
-    const rawBody = await getRawBody(req);
-
-    if (rawBody.length === 0) {
-      console.log("Empty body received");
-      return res.status(200).json({ ok: true, message: "Empty body" });
+    if (!signature) {
+      console.warn("Missing x-line-signature header");
+      return res.status(401).json({ error: "Missing signature" });
     }
 
-    // Use rawBody (Buffer) directly for signature validation
-    if (!signature || !validateSignature(rawBody, config.channelSecret, signature)) {
-      console.error(`Signature validation failed. Body length: ${rawBody.length}, Secret length: ${config.channelSecret.length}`);
+    const rawBody = await getRawBody(req);
+    const bodyString = rawBody.toString("utf-8");
+
+    // 2. Signature Validation
+    // validateSignature expects (body: string | Buffer, secret: string, signature: string)
+    if (!validateSignature(bodyString, config.channelSecret, signature)) {
+      console.error("401 Unauthorized: Signature check failed");
+      console.error(`- Received Signature: ${signature.substring(0, 10)}...`);
+      console.error(`- Body Length: ${rawBody.length}`);
+      console.error(`- Secret Length: ${config.channelSecret.length}`);
+      
+      // If we are in local dev or specific debug mode, we could log more, 
+      // but for security, we keep it minimal in production.
       return res.status(401).json({ error: "Invalid signature" });
     }
 
-    const body = JSON.parse(rawBody.toString("utf-8"));
+    const body = JSON.parse(bodyString);
     const events = body.events || [];
 
+    // LINE "Verify" button sends a dummy request with empty events
+    if (events.length === 0) {
+      console.log("LINE Verification request received (0 events)");
+      return res.status(200).json({ ok: true, message: "Verification success" });
+    }
+
+    // 3. Event Processing
     for (const event of events) {
       await handleEvent(event);
     }
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Webhook Error:", err);
-    // Returning 500 to help with debugging via Vercel logs
-    return res.status(500).json({ error: err.message });
+    console.error("Webhook Handler Error:", err.message);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
 
@@ -120,8 +138,8 @@ async function handleEvent(event) {
       }
     }
   } catch (err) {
-    console.error("Event Handling Error:", err);
-    throw err;
+    console.error("Event Processing Error:", err);
+    // Don't throw, just log to prevent 500 retries from LINE
   }
 }
 
@@ -131,14 +149,13 @@ async function loadKeywords() {
     if (kvKeywords && typeof kvKeywords === "object") {
       return kvKeywords;
     }
-
     const kwPath = path.join(__dirname, "../data/keywords.json");
     if (fs.existsSync(kwPath)) {
       return JSON.parse(fs.readFileSync(kwPath, "utf-8"));
     }
     return {};
   } catch (err) {
-    console.error("Load keywords error:", err);
+    console.error("Load keywords failed:", err);
     return {};
   }
 }
@@ -154,10 +171,10 @@ async function playNode(event, storyId, nodeId) {
   const pages = await kv.get(`story:${storyId}:node:${nodeId}`);
 
   if (!pages || !Array.isArray(pages)) {
-    console.warn(`Node data missing: story:${storyId}:node:${nodeId}`);
+    console.warn(`Node missing in KV: story:${storyId}:node:${nodeId}`);
     return await client.replyMessage({
       replyToken: event.replyToken,
-      messages: [{ type: "text", text: `抱歉，故事內容（${nodeId}）還沒準備好。` }],
+      messages: [{ type: "text", text: `抱歉，故事節點（${nodeId}）資料尚未準備好。` }],
     });
   }
 
@@ -172,17 +189,17 @@ async function playNode(event, storyId, nodeId) {
       if (rd.optionA?.targetNodeId) {
         actions.push({
           type: "postback",
-          label: (rd.optionA.label || "選擇 A").substring(0, 20),
+          label: (rd.optionA.label || "A").substring(0, 20),
           data: `action=goto&storyId=${storyId}&nodeId=${rd.optionA.targetNodeId}`,
-          displayText: rd.optionA.label || "選擇 A",
+          displayText: rd.optionA.label || "A",
         });
       }
       if (rd.optionB?.targetNodeId) {
         actions.push({
           type: "postback",
-          label: (rd.optionB.label || "選擇 B").substring(0, 20),
+          label: (rd.optionB.label || "B").substring(0, 20),
           data: `action=goto&storyId=${storyId}&nodeId=${rd.optionB.targetNodeId}`,
-          displayText: rd.optionB.label || "選擇 B",
+          displayText: rd.optionB.label || "B",
         });
       }
     } else if (isLast && (p.pageType === "next" || p.pageType === "monologue")) {
@@ -192,7 +209,6 @@ async function playNode(event, storyId, nodeId) {
         const match = nodeId.match(/n(\d+)/);
         if (match) nextNodeId = `n${parseInt(match[1]) + 1}`;
       }
-
       if (nextNodeId) {
         actions.push({
           type: "postback",
@@ -204,11 +220,7 @@ async function playNode(event, storyId, nodeId) {
     }
 
     if (actions.length === 0) {
-      actions.push({
-        type: "postback",
-        label: "看細節",
-        data: "action=noop",
-      });
+      actions.push({ type: "postback", label: "下一步", data: "action=noop" });
     }
 
     return {
@@ -225,10 +237,7 @@ async function playNode(event, storyId, nodeId) {
       {
         type: "template",
         altText: "故事更新了",
-        template: {
-          type: "carousel",
-          columns: columns.slice(0, 10),
-        },
+        template: { type: "carousel", columns: columns.slice(0, 10) },
       },
     ],
   });
