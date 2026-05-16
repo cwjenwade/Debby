@@ -1,0 +1,20 @@
+{
+  "開始": {
+    "type": "story",
+    "storyId": "story-mvp",
+    "nodeId": "n1"
+  },
+  "重來": {
+    "type": "story",
+    "storyId": "story-mvp",
+    "nodeId": "n1"
+  },
+  "你好": {
+    "type": "text",
+    "text": "你好！我是 Debby，你的數位繪本小助手。輸入「開始」來閱讀故事吧！"
+  },
+  "幫助": {
+    "type": "text",
+    "text": "支援的指令：\n- 開始：開始閱讀故事\n- 重來：回到故事開頭\n- 幫助：顯示此說明"
+  }
+}

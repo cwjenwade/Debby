@@ -4,5 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vercel dev"
+  },
+  "dependencies": {
+    "@line/bot-sdk": "^9.0.0",
+    "@vercel/kv": "^1.0.1"
   }
 }
