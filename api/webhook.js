@@ -15,7 +15,6 @@ const client = new messagingApi.MessagingApiClient({
   channelAccessToken: config.channelAccessToken,
 });
 
-// Disable body parser to get raw body for signature validation
 export const endpointConfig = {
   api: {
     bodyParser: false,
@@ -67,7 +66,7 @@ async function handleEvent(event) {
 
   if (event.type === "message" && event.message.type === "text") {
     const text = event.message.text.trim();
-    const keywords = loadKeywords();
+    const keywords = await loadKeywords();
 
     if (keywords[text]) {
       const kw = keywords[text];
@@ -100,10 +99,20 @@ async function handleEvent(event) {
   }
 }
 
-function loadKeywords() {
+async function loadKeywords() {
   try {
+    // Prioritize Vercel KV for dynamic updates
+    const kvKeywords = await kv.get("debby:keywords");
+    if (kvKeywords && typeof kvKeywords === "object") {
+      return kvKeywords;
+    }
+
+    // Fallback to local file
     const kwPath = path.join(__dirname, "../data/keywords.json");
-    return JSON.parse(fs.readFileSync(kwPath, "utf-8"));
+    if (fs.existsSync(kwPath)) {
+      return JSON.parse(fs.readFileSync(kwPath, "utf-8"));
+    }
+    return {};
   } catch (err) {
     console.error("Load keywords failed:", err);
     return {};
