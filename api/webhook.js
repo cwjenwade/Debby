@@ -33,8 +33,19 @@ async function getRawBody(req) {
 }
 
 export default async function handler(req, res) {
+  // GET request for basic connectivity check
   if (req.method === "GET") {
-    return res.status(200).json({ ok: true, service: "Debby webhook", hasToken: !!config.channelAccessToken });
+    return res.status(200).json({
+      ok: true,
+      service: "Debby Webhook (v2.1)",
+      config: {
+        hasAccessToken: !!config.channelAccessToken,
+        accessTokenLength: config.channelAccessToken.length,
+        hasChannelSecret: !!config.channelSecret,
+        channelSecretLength: config.channelSecret.length,
+      },
+      hint: "If secret length is ~170, you probably swapped it with the access token. Secret should be 32 chars."
+    });
   }
 
   if (req.method !== "POST") {
@@ -44,19 +55,19 @@ export default async function handler(req, res) {
   try {
     const signature = req.headers["x-line-signature"];
     const rawBody = await getRawBody(req);
-    const bodyString = rawBody.toString("utf-8");
 
-    if (!bodyString) {
+    if (rawBody.length === 0) {
       console.log("Empty body received");
       return res.status(200).json({ ok: true, message: "Empty body" });
     }
 
-    if (!signature || !validateSignature(bodyString, config.channelSecret, signature)) {
-      console.error("Signature validation failed. Signature exists:", !!signature);
+    // Use rawBody (Buffer) directly for signature validation
+    if (!signature || !validateSignature(rawBody, config.channelSecret, signature)) {
+      console.error(`Signature validation failed. Body length: ${rawBody.length}, Secret length: ${config.channelSecret.length}`);
       return res.status(401).json({ error: "Invalid signature" });
     }
 
-    const body = JSON.parse(bodyString);
+    const body = JSON.parse(rawBody.toString("utf-8"));
     const events = body.events || [];
 
     for (const event of events) {
@@ -65,10 +76,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Webhook main handler error:", err);
-    // Return 200 to LINE to stop retries if it's a known non-critical error, 
-    // but here we use 500 to help user see the error in Vercel logs.
-    return res.status(500).json({ error: err.message, stack: err.stack });
+    console.error("Webhook Error:", err);
+    // Returning 500 to help with debugging via Vercel logs
+    return res.status(500).json({ error: err.message });
   }
 }
 
@@ -110,7 +120,7 @@ async function handleEvent(event) {
       }
     }
   } catch (err) {
-    console.error("Error in handleEvent:", err);
+    console.error("Event Handling Error:", err);
     throw err;
   }
 }
@@ -175,7 +185,7 @@ async function playNode(event, storyId, nodeId) {
           displayText: rd.optionB.label || "選擇 B",
         });
       }
-    } else if (isLast && p.pageType === "next") {
+    } else if (isLast && (p.pageType === "next" || p.pageType === "monologue")) {
       const rd = p.renderData || {};
       let nextNodeId = rd.targetNodeId;
       if (!nextNodeId) {
@@ -203,7 +213,7 @@ async function playNode(event, storyId, nodeId) {
 
     return {
       thumbnailImageUrl: p.imageUrl || "https://via.placeholder.com/1024x1024.png?text=Loading",
-      title: p.pageType === "dialogue" ? p.renderData?.speakerName?.substring(0, 40) : undefined,
+      title: (p.pageType === "dialogue" ? p.renderData?.speakerName : "").substring(0, 40),
       text: (p.renderData?.text || p.renderData?.prompt || p.renderData?.paragraphs?.[0] || "...").substring(0, 60),
       actions: actions.slice(0, 3),
     };
