@@ -6,16 +6,18 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const clean = (val) => (val || "").replace(/^["']|["']$/g, "").trim();
+
 const client = new messagingApi.MessagingApiClient({
-  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+  channelAccessToken: clean(process.env.LINE_CHANNEL_ACCESS_TOKEN),
 });
 
 const blobClient = new messagingApi.MessagingApiBlobClient({
-  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
+  channelAccessToken: clean(process.env.LINE_CHANNEL_ACCESS_TOKEN),
 });
 
 function getSecret() {
-  return (process.env.ADMIN_API_SECRET || "").replace(/^["']|["']$/g, "");
+  return clean(process.env.ADMIN_API_SECRET);
 }
 
 export default async function handler(req, res) {

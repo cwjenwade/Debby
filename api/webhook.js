@@ -6,9 +6,12 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Helper to clean env vars
+const clean = (val) => (val || "").replace(/^["']|["']$/g, "").trim();
+
 const config = {
-  channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN,
-  channelSecret: process.env.LINE_CHANNEL_SECRET,
+  channelAccessToken: clean(process.env.LINE_CHANNEL_ACCESS_TOKEN),
+  channelSecret: clean(process.env.LINE_CHANNEL_SECRET),
 };
 
 const client = new messagingApi.MessagingApiClient({
@@ -31,7 +34,7 @@ async function getRawBody(req) {
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
-    return res.status(200).json({ ok: true, service: "Debby webhook" });
+    return res.status(200).json({ ok: true, service: "Debby webhook", hasToken: !!config.channelAccessToken });
   }
 
   if (req.method !== "POST") {
@@ -43,7 +46,13 @@ export default async function handler(req, res) {
     const rawBody = await getRawBody(req);
     const bodyString = rawBody.toString("utf-8");
 
+    if (!bodyString) {
+      console.log("Empty body received");
+      return res.status(200).json({ ok: true, message: "Empty body" });
+    }
+
     if (!signature || !validateSignature(bodyString, config.channelSecret, signature)) {
+      console.error("Signature validation failed. Signature exists:", !!signature);
       return res.status(401).json({ error: "Invalid signature" });
     }
 
@@ -56,65 +65,70 @@ export default async function handler(req, res) {
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Webhook error:", err);
-    return res.status(500).json({ error: err.message });
+    console.error("Webhook main handler error:", err);
+    // Return 200 to LINE to stop retries if it's a known non-critical error, 
+    // but here we use 500 to help user see the error in Vercel logs.
+    return res.status(500).json({ error: err.message, stack: err.stack });
   }
 }
 
 async function handleEvent(event) {
-  const userId = event.source.userId;
+  try {
+    const userId = event.source.userId;
 
-  if (event.type === "message" && event.message.type === "text") {
-    const text = event.message.text.trim();
-    const keywords = await loadKeywords();
+    if (event.type === "message" && event.message.type === "text") {
+      const text = event.message.text.trim();
+      const keywords = await loadKeywords();
 
-    if (keywords[text]) {
-      const kw = keywords[text];
-      if (kw.type === "story") {
-        return startStory(event, kw.storyId, kw.nodeId);
-      } else if (kw.type === "text") {
-        return client.replyMessage({
-          replyToken: event.replyToken,
-          messages: [{ type: "text", text: kw.text }],
-        });
+      if (keywords[text]) {
+        const kw = keywords[text];
+        if (kw.type === "story") {
+          return await startStory(event, kw.storyId, kw.nodeId);
+        } else if (kw.type === "text") {
+          return await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{ type: "text", text: kw.text }],
+          });
+        }
+      }
+
+      // Default Fallback
+      return await client.replyMessage({
+        replyToken: event.replyToken,
+        messages: [{ type: "text", text: `收到: ${text}。輸入「開始」閱讀故事，或「幫助」查看指令。` }],
+      });
+    }
+
+    if (event.type === "postback") {
+      const data = new URLSearchParams(event.postback.data);
+      const action = data.get("action");
+      const storyId = data.get("storyId");
+      const nodeId = data.get("nodeId");
+
+      if (action === "goto" && storyId && nodeId) {
+        return await playNode(event, storyId, nodeId);
       }
     }
-
-    // Default Fallback
-    return client.replyMessage({
-      replyToken: event.replyToken,
-      messages: [{ type: "text", text: `收到: ${text}。輸入「開始」閱讀故事，或「幫助」查看指令。` }],
-    });
-  }
-
-  if (event.type === "postback") {
-    const data = new URLSearchParams(event.postback.data);
-    const action = data.get("action");
-    const storyId = data.get("storyId");
-    const nodeId = data.get("nodeId");
-
-    if (action === "goto" && storyId && nodeId) {
-      return playNode(event, storyId, nodeId);
-    }
+  } catch (err) {
+    console.error("Error in handleEvent:", err);
+    throw err;
   }
 }
 
 async function loadKeywords() {
   try {
-    // Prioritize Vercel KV for dynamic updates
     const kvKeywords = await kv.get("debby:keywords");
     if (kvKeywords && typeof kvKeywords === "object") {
       return kvKeywords;
     }
 
-    // Fallback to local file
     const kwPath = path.join(__dirname, "../data/keywords.json");
     if (fs.existsSync(kwPath)) {
       return JSON.parse(fs.readFileSync(kwPath, "utf-8"));
     }
     return {};
   } catch (err) {
-    console.error("Load keywords failed:", err);
+    console.error("Load keywords error:", err);
     return {};
   }
 }
@@ -122,7 +136,7 @@ async function loadKeywords() {
 async function startStory(event, storyId, nodeId) {
   const userId = event.source.userId;
   await kv.set(`session:${userId}`, { storyId, nodeId });
-  return playNode(event, storyId, nodeId);
+  return await playNode(event, storyId, nodeId);
 }
 
 async function playNode(event, storyId, nodeId) {
@@ -130,7 +144,8 @@ async function playNode(event, storyId, nodeId) {
   const pages = await kv.get(`story:${storyId}:node:${nodeId}`);
 
   if (!pages || !Array.isArray(pages)) {
-    return client.replyMessage({
+    console.warn(`Node data missing: story:${storyId}:node:${nodeId}`);
+    return await client.replyMessage({
       replyToken: event.replyToken,
       messages: [{ type: "text", text: `抱歉，故事內容（${nodeId}）還沒準備好。` }],
     });
@@ -147,7 +162,7 @@ async function playNode(event, storyId, nodeId) {
       if (rd.optionA?.targetNodeId) {
         actions.push({
           type: "postback",
-          label: rd.optionA.label || "選擇 A",
+          label: (rd.optionA.label || "選擇 A").substring(0, 20),
           data: `action=goto&storyId=${storyId}&nodeId=${rd.optionA.targetNodeId}`,
           displayText: rd.optionA.label || "選擇 A",
         });
@@ -155,7 +170,7 @@ async function playNode(event, storyId, nodeId) {
       if (rd.optionB?.targetNodeId) {
         actions.push({
           type: "postback",
-          label: rd.optionB.label || "選擇 B",
+          label: (rd.optionB.label || "選擇 B").substring(0, 20),
           data: `action=goto&storyId=${storyId}&nodeId=${rd.optionB.targetNodeId}`,
           displayText: rd.optionB.label || "選擇 B",
         });
@@ -171,7 +186,7 @@ async function playNode(event, storyId, nodeId) {
       if (nextNodeId) {
         actions.push({
           type: "postback",
-          label: rd.nextLabel || rd.buttonLabel || "繼續",
+          label: (rd.nextLabel || rd.buttonLabel || "繼續").substring(0, 20),
           data: `action=goto&storyId=${storyId}&nodeId=${nextNodeId}`,
           displayText: rd.nextLabel || rd.buttonLabel || "繼續",
         });
@@ -189,12 +204,12 @@ async function playNode(event, storyId, nodeId) {
     return {
       thumbnailImageUrl: p.imageUrl || "https://via.placeholder.com/1024x1024.png?text=Loading",
       title: p.pageType === "dialogue" ? p.renderData?.speakerName?.substring(0, 40) : undefined,
-      text: (p.renderData?.text || p.renderData?.prompt || "...").substring(0, 60),
+      text: (p.renderData?.text || p.renderData?.prompt || p.renderData?.paragraphs?.[0] || "...").substring(0, 60),
       actions: actions.slice(0, 3),
     };
   });
 
-  return client.replyMessage({
+  return await client.replyMessage({
     replyToken: event.replyToken,
     messages: [
       {
